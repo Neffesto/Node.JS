@@ -1,59 +1,46 @@
-require('colors')
+var colors = require('colors');
 
-const Colors = {GREEN : 0, YELLOW: 1, RED : 2}
+let firstNumber = 2,
+    secondNumber = 100,
+    colorsArr = ['green', 'yellow', 'red'];
 
-let currentColor = Colors.GREEN;
-const leftRest = process.argv[2];
-const rightRest = process.argv[3];
-let noPrimeNum = true;
+    simpleCounter(firstNumber, secondNumber);
 
-if(isNaN(leftRest) || isNaN(rightRest)){
-    console.log('Incorrect start parameters'.red);
-    return;
-}
+function simpleCounter(startCount, endCount, cntr = 0, trigger = true) {
+    let start = parseInt(startCount), 
+        end = parseInt(endCount);
 
-const isPrimeNum = (num) => {
-    if (num <= 1)
-        return false;
-    for(let i = 2; i < num; i++)
-        if(num % i === 0) return false;
-    return true;
-}
-const changeColor = () => {
-    currentColor++;
-    if (currentColor > Colors.RED)
-        currentColor = Colors.GREEN;
-}
+    if(start < 2) {
+        start = 2;
+    } 
 
-const colorPrint = (num) => {
-    if(noPrimeNum) noPrimeNum = false;
-    switch (currentColor){
-        case Colors.RED:
-            console.log(`${num}`.red);
-            break;
-        case Colors.GREEN:
-            console.log(`${num}`.green);
-            break;
-        case Colors.YELLOW:
-            console.log(`${num}`.yellow);
-            break;
+    if(!Number.isInteger(start) || !Number.isInteger(end)) {
+        console.log(colors.red('Один или оба аргумента не являются числами'));
+        return;
     }
-    changeColor();
+
+    if(start >= end) {
+        console.log(colors.red('В указанном диапазоне нет простых чисел'));
+        return;
+    }
+
+    nextPrime:
+    for (let i = start; i <= end; i++) {
+    
+        for (let j = 2; j < i; j++) { 
+        if (i % j == 0) continue nextPrime; 
+        }
+        
+        console.log(colors[colorsArr[cntr]](i)); 
+        cntr++;
+        trigger = false;
+        if(cntr > 2) {
+            cntr = 0;
+        }
+    }
+
+    if(trigger) {
+        console.log(colors.red('В указанном диапазоне нет простых чисел'));
+        return;
+    }
 }
-
-// if (i % 3 === 0) {
-//     console.log(red(data[i]));
-// } else if ((i + 1) % 3 === 0) {
-// } else if (i % 3 === 1) {
-//     console.log(yellow(data[i]));
-// } else {
-//     console.log(green(data[i]));
-// }
-// console.log(arrColors[i % arrColors.length](arrNumbers[i].toString()))
-
-
-for (let i = leftRest; i <= rightRest; i++){
-    if (isPrimeNum(i)) colorPrint(i);
-}
-if(noPrimeNum)
-    console.log(`There are no primes in this range[${leftRest},${rightRest}]`.red);
